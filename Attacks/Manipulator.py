@@ -8,13 +8,18 @@ from PIL.ImageFilter import (
 
 
 class Manipulator:
-    def __init__(self, original):
+    def __init__(self, manipulations):
         '''
         PIL.Image.open('path')
         '''
-        self.original = original
-        self.res = original # pil_img
-        
+        self.manipulations = manipulations
+    
+    def apply(self, img):
+        for mani in self.manipulations:
+            if 
+
+
+
     def flip(self, flipcode=0): # pil_img
         if flipcode != 0:
             self.res = ImageOps.flip(self.res) 
