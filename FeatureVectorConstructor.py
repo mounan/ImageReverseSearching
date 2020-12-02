@@ -1,13 +1,14 @@
-from algorithmes.ColorQuantization import get_proportion_vector
-from algorithmes.PHash import get_phash_vector
+from Algorithms.ColorQuantization import get_proportion_vector
+from Algorithms.PHash import get_phash_vector
 import cv2
 import os
 from PIL import Image
 import timeit
 import json
 import imagehash
-from manipulations.Manipulator import Manipulator, pil2cv, cv2pil
-from manipulations.Manipulator import (
+import numpy as np
+from Attacks.Manipulator import Manipulator
+from Attacks.Manipulator import (
     CONTOUR, DETAIL, EDGE_ENHANCE, EDGE_ENHANCE_MORE,
    EMBOSS, FIND_EDGES, SMOOTH, SMOOTH_MORE, SHARPEN
 ) 
@@ -43,7 +44,7 @@ class FeatureVectorConstructor:
         elif self.apc == 'phash':
             t1 = timeit.default_timer()
             for image in self.images:
-                img = Image.open(f"Data/Originals/{image}")
+                img = Image.open(f"{self.dir}/{image}")
                 self.original_vector_dict[image] = get_phash_vector(img)
             t2 = timeit.default_timer()
             self.time_rate = (t2-t1) / len(self.images)
@@ -52,10 +53,14 @@ class FeatureVectorConstructor:
     def construct_with_manipulation(self, manipulations):
         m = Manipulator(manipulations)
         if self.apc == 'color':
-            pass
+            for image in self.images:
+                img = Image.open(f"{self.dir}/{image}")
+                m_img = m.apply(img)
+                m_img = cv2.cvtColor(np.array(m_img), cv2.COLOR_RGB2BGR)
+                self.manipulated_vector_dict[image] = get_proportion_vector(m_img)
         elif self.apc == 'phash':
             for image in self.images:
-                img = Image.open(f"Data/Originals/{image}")
+                img = Image.open(f"{self.dir}/{image}")
                 m_img = m.apply(img)
                 self.manipulated_vector_dict[image] = get_phash_vector(m_img)
         return self.manipulated_vector_dict
