@@ -1,6 +1,5 @@
-import cv2
 import numpy as np
-from PIL import Image, ImageOps, ImageFilter
+from PIL import Image, ImageOps, ImageFilter, ImageFont, ImageDraw
 from PIL.ImageFilter import (
    CONTOUR, DETAIL, EDGE_ENHANCE, EDGE_ENHANCE_MORE,
    EMBOSS, FIND_EDGES, SMOOTH, SMOOTH_MORE, SHARPEN
@@ -26,11 +25,11 @@ class Manipulator:
                 img = ImageOps.mirror(img)
             elif 'rotate' in mani:
                 degree = int(mani[6:])
-                if degree % 90 == 0:
-                    
-                    img = img.rotate(degree, expand=True)
-                else:
-                    img = img.rotate(degree, expand=False)
+                # if degree % 90 == 0:
+                #     img = img.rotate(degree, expand=True)
+                # else:
+                #     img = img.rotate(degree, expand=False)
+                img = img.rotate(degree, expand=True)
             elif 'crop' in mani:
                 width, height = img.size
                 img = img.crop((mani['crop']['left']*width, mani['crop']['upper']*height, mani['crop']['right']*width, mani['crop']['lower']*height))
@@ -39,7 +38,7 @@ class Manipulator:
                 width = img.width
                 height = img.height  
                 img = img.resize((int(ratio*width), int(ratio*height)))
-            elif 'grayscale' == mani:
+            elif 'grayscale' == mani:  
                 gamma22LUT  = [pow(x/255.0, 2.2)*255 for x in range(256)] * 3
                 gamma045LUT = [pow(x/255.0, 1.0/2.2)*255 for x in range(256)]
                 img_rgb = img.convert("RGB")
@@ -49,6 +48,12 @@ class Manipulator:
                 img = img_gray
             elif 'filter' in mani:
                 img = self.add_filter(img, mani['filter'])
+            elif 'watermark' in mani:
+                width = img.width
+                height = img.height
+                font = ImageFont.truetype("Attacks/times-ro.ttf", width//20)
+                draw = ImageDraw.Draw(img)
+                draw.text((width/2, height/2),"Sample Water Mark",(255,255,255),font=font)
         return img
 
     def add_filter(self, img, filters): # pil_img

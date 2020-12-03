@@ -9,9 +9,9 @@ def match_acc(base, queries, dist):
         sum_of_match = 0
         for query_key in queries:
             min_dist_key = query_key
-            min_dist = np.linalg.norm(base[min_dist_key], queries[query_key])
+            min_dist = np.linalg.norm(base[min_dist_key]-queries[query_key])
             for img_key in base:
-                tmp_dist = np.linalg.norm(base[img_key], queries[query_key])
+                tmp_dist = np.linalg.norm(base[img_key]-queries[query_key])
                 if min_dist > tmp_dist:
                     min_dist = tmp_dist
                     min_dist_key = img_key

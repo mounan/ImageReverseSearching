@@ -28,14 +28,8 @@ def proportion_list(label):
     input: a label list of an image after kmeans transformation
     return: a sorted color proportion list
     """
-    return (np.sort(np.unique(label, return_counts=True)[1]/len(label))*100)[::-1]    
+    return (np.sort(np.round(np.unique(label, return_counts=True)[1]/len(label), decimals=3))*100)[::-1]    
     
-def get_proportion_vector(img, K=10, attempts=10, epsilon=0.0001, max_iter=500, lab=True):
+def get_proportion_vector(img, K=10, attempts=5, epsilon=0.0005, max_iter=200, lab=True):
     res, label = kmeans_trans(img, K, attempts, epsilon, max_iter, lab)
     return proportion_list(label)
-
-def dist(v1, v2):
-    '''
-    euclidean distance
-    '''
-    pass
